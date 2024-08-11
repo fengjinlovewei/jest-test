@@ -7,7 +7,10 @@
 const config = {
   // All imported modules in your tests should be mocked automatically
   // 这个开启，意味着mock数据将会自动在当前目录的__mocks__目录下寻找相同的文件
-  automock: true,
+  // 但是这个玩意作用域是这个项目，一旦开启所有的test测试文件都会去 __mocks__
+  // 找mock文件，在 __mocks__ 里定义所有 test 的 mock 文件 这有点不太现实
+  // 所以还是关掉吧
+  // automock: false,
 
   // Stop running tests after `n` failures
   // bail: 0,
