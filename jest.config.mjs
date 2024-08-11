@@ -6,7 +6,8 @@
 /** @type {import('jest').Config} */
 const config = {
   // All imported modules in your tests should be mocked automatically
-  // automock: false,
+  // 这个开启，意味着mock数据将会自动在当前目录的__mocks__目录下寻找相同的文件
+  automock: true,
 
   // Stop running tests after `n` failures
   // bail: 0,

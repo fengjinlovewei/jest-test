@@ -133,22 +133,29 @@ test('toThrow', () => {
 });
 
 /***
- * 处理异步的3种方式
+ * 处理异步的4种方式
  */
-const getData = () => {
+
+const getData = (bool = true) => {
   return new Promise((res, rej) => {
     setTimeout(() => {
-      res({ a: 1 });
-    }, 1000);
+      if (bool) {
+        res({ a: 1 });
+      } else {
+        rej('err');
+      }
+    }, 300);
   });
 };
 
-test('async', async () => {
+// 1
+test('async-async', async () => {
   const data = await getData();
   expect(data).toEqual({ a: 1 });
 });
 
-test('done', (done) => {
+// 2
+test('async-done', (done) => {
   // toThrow 如果有参数必须和抛出的错误一致
   getData().then((data) => {
     expect(data).toEqual({ a: 1 });
@@ -156,11 +163,25 @@ test('done', (done) => {
   });
 });
 
-// 也可以直接return这个promise，也能达到async的效果
-test('async', () => {
+// 3 也可以直接return这个promise，也能达到async的效果
+test('async-return', () => {
   return getData().then((data) => {
     expect(data).toEqual({ a: 1 });
   });
+});
+
+// 4
+test('async-resolves', () => {
+  // return 也可以改成await
+  return expect(getData()).resolves.toMatchObject({
+    a: 1,
+  });
+});
+
+test('async-rejects', async () => {
+  // return 也可以改成await
+  // 这块如果是http请求的话，使用rejects.toThrow 更合适
+  await expect(getData(false)).rejects.toMatch('err');
 });
 
 /***
@@ -170,9 +191,9 @@ test('async', () => {
 // 如果 getData 不报错，那么就不会执行 catch 里的 expect
 // 想要必须执行这个 expect ，可以使用 expect.assertions(1);
 // 表示必须执行一次 expect
-test.skip('asyncError', () => {
+test('async-asyncError', () => {
   expect.assertions(1);
-  return getData().catch((err) => {
-    expect(err).toBeTruthy();
+  return getData(false).catch((err) => {
+    expect(err).toMatch('err');
   });
 });
